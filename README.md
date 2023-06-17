@@ -38,92 +38,89 @@ Finally, the notebooks **"S7_Step1.ipynb,"** "**S7_Step2.ipynb**," "**S7_Step3.i
 
 This separation allows for the modular and organized development of the project components.
 
-## Model Architecture
+## Goal
 
-The model, implemented in the Net class, follows a sequential structure that defines the layers and operations performed on the input data.
+The goal is to reach a Test Accuracy of 99.4% within 15 Epochs or less, using fewer than 8,000 Parameters, on the MNIST dataset.
 
-```bash
-    class Net(nn.Module):
-    """
-     This defines the architecture or structure of the neural network.
-    """
+## Step 1: The Setup 
+### **Target**:
+1.	Ensure the correct setup.
+2.	Define the necessary transformations.
+3.	Configure the data loader.
+4.	Establish the foundation of the code.
+5.	Implement the basic training and testing loop.
+6.	Establish a robust skeleton structure, minimizing subsequent modifications if possible.
+   
+### **Results**:
+1.	Parameters: 190K -- 190,442
+2.	Best Training Accuracy: 98.57
+3.	Best Test Accuracy: 98.95
+   
+  	![image](https://github.com/Paurnima-Chavan/mnist-S7/assets/25608455/45ed2b83-45db-472f-a5c3-12a5e1c14218)
+  	
+**The final few epochs:**
 
-    def __init__(self):
-        super(Net, self).__init__()
-        self.conv1 = nn.Sequential(
-            nn.Conv2d(1, 128, kernel_size=3),
-            nn.ReLU(),
-            nn.BatchNorm2d(128)
-        )
-        self.onecross1 = nn.Sequential(
-            nn.Conv2d(128, 4, kernel_size=3)
-        )
-        self.conv2 = nn.Sequential(
-            nn.Conv2d(4, 16, kernel_size=3),
-            nn.ReLU(),
-            nn.BatchNorm2d(16),
-            nn.MaxPool2d(2)
+![image](https://github.com/Paurnima-Chavan/mnist-S7/assets/25608455/05167e8b-5b3e-4159-8f72-17ab1ffa7bfb)
 
-        )
-        self.conv3 = nn.Sequential(
-            nn.Conv2d(16, 16, kernel_size=3),
-            nn.ReLU(),
-            nn.BatchNorm2d(16),
-            nn.Dropout2d(0.1)
+### **Analysis**:
+1.	Heavy Model for such a problem
 
-        )
-        self.onecross1_2 = nn.Sequential(
-            nn.Conv2d(16, 16, kernel_size=3)
-        )
-        self.conv4 = nn.Sequential(
-            nn.Conv2d(16, 32, kernel_size=3),
-            nn.ReLU(),
-            nn.BatchNorm2d(32),
-            nn.MaxPool2d(2)
-        )
-        self.conv5 = nn.Sequential(
-            nn.Conv2d(32, 10, kernel_size=1)
-        )
+## Step 2: The Skeleton
+### Target:
 
-        self.gap1 = nn.Sequential(
-            nn.AvgPool2d(2)
-        )
+Ensure the fundamental structure is correct. We will make an effort to minimize alterations to this framework.
+### Results:
 
-    def forward(self, x):
-        x = self.conv1(x)
-        x = self.onecross1(x)
-        x = F.relu(self.conv2(x))
-        x = self.conv3(x)
-        x = self.onecross1_2(x)
-        x = self.conv4(x)
-        x = self.conv5(x)
-        x = self.gap1(x)
-        x = x.squeeze()
-        return F.log_softmax(x, dim=1)
-```
+1. Parameters: 18K
+2. Best Training Accuracy: 99.17
+3. Best Test Accuracy: 99.35
 
-### Model Summary
+![image](https://github.com/Paurnima-Chavan/mnist-S7/assets/25608455/20ad695c-fee2-4afc-aa34-dcc79eff1f21)
 
-<p align="left">    
-    <img width="600" aling="right" src="https://github.com/Paurnima-Chavan/mnist-S6/assets/25608455/a72b1e11-a4e2-4ebe-9e75-4929c4069e48" />
-</p>
+**The final few epochs:**
 
-We will be building the following network, as you can see it We will be building the following network, as you can see it contains **seven Convolution layers**, **two Max pooling layers** (to reduce channel size into half), **two 1*1 layers** followed by **Avg pooling layer.**
+![image](https://github.com/Paurnima-Chavan/mnist-S7/assets/25608455/3ffbb266-c295-463a-80ce-ae51606a3eb0)
 
-## Usage
+### Analysis:
 
-To use the model for handwritten digit recognition, followed below steps:
+1. The model demonstrates promise, but it requires further optimization to reduce its overall weight.
+2. No signs of over-fitting have been observed, indicating that the model has the potential to perform even better with additional training or adjustments.
 
-- Instantiate an instance of the Net class.
-- Load the MNIST dataset and preprocess it as required.    
-- Pass the preprocessed input through the model's forward method to obtain the predicted digit class probabilities.
-- We have used SGD (Stochastic Gradient Descent) optimizer, which will be used to update the model's parameters during training. The learning rate is set to 0.01, and the momentum is set to 0.9
-- Trained the model for the specified number of epochs, printing the epoch number, and performs training and testing steps in each epoch. The learning rate is adjusted using the scheduler, allowing better optimization over time. The train and test functions are responsible for the actual training and testing processes, respectively.   
-- Finally, plotted the training and testing accuracy as well as the training and testing loss. It creates a 2x2 grid of subplots in a figure to visualize the training and testing performance over epochs, providing insights into the model's learning progress.
+## Step 3: The Batch Normalization
+### Target:
+1.	Add Batch-norm to increase model efficiency.
+### Results:
+1.	Parameters: 6.2K -- 6,270
+2.	Best Training Accuracy: 99.03
+3.	Best Test Accuracy: 99.34
+   
+   ![image](https://github.com/Paurnima-Chavan/mnist-S7/assets/25608455/d6e04895-3628-4265-9c39-069bd77f10b4)
 
-<p align="center">    
-    <img width="800" hight="300" aling="right" src="https://github.com/Paurnima-Chavan/mnist-S6/assets/25608455/59500e1e-d1ec-46b2-85cc-1762d6b0936c" />
- </p>
+**The final few epochs:**
 
-## Summary
-In summary, our efforts have yielded a successfully established environment using PyTorch and TorchVision. Leveraging this environment, we were able to classify handwritten digits from the MNIST dataset with remarkable accuracy, achieving a 99.4% accuracy rate using only 16.5 k parameters.
+![image](https://github.com/Paurnima-Chavan/mnist-S7/assets/25608455/a1319e09-fe7b-4853-b7ea-4c246f72145d)
+
+### Analysis:
+1.	As we have decreased the capacity of the model, it is anticipated that there will be a decline in performance.
+2.	To further enhance the model, it is necessary to augment the model capacity and adjust other relevant parameters.
+
+## Step 4: Increase the Capacity, Correct MaxPooling Location m11
+### Target:
+1.	Enhance the model capacity by incorporating additional layers at the end.
+2.	Correct the position of max pooling in the model architecture.
+3.	Fine-tune the learning rate to optimize model performance.
+4.	Fine-tune the learning rate to optimize model performance.	
+### Results:
+1.	Parameters: 7K -- 7,074
+2.	Best Training Accuracy: 98.94
+3.	Best Test Accuracy: 99.46
+   
+   ![image](https://github.com/Paurnima-Chavan/mnist-S7/assets/25608455/7c4390ab-7871-4352-9ada-3e9500396526)
+   
+**The final few epochs:**
+
+   ![image](https://github.com/Paurnima-Chavan/mnist-S7/assets/25608455/ce06c07f-4fca-454a-884d-419d900f6bd1)
+
+
+### Analysis: 
+1.	The implemented changes proved to be effective as the model achieved a target accuracy of 99.4% after 15 epochs of training.
